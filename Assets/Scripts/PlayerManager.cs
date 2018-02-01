@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 public class PlayerManager : Singleton<PlayerManager> {
 
     [SerializeField] private float maxSpeed = 10f;
-	[SerializeField] private float jumpForce = 500f;
+	[SerializeField] private float jumpForce = 700f;
 	[SerializeField] private float healthPoints = 100f;
 	[SerializeField] private float maxHealthPoints = 100f;
 	[SerializeField] private GameObject fireball;
@@ -23,10 +23,16 @@ public class PlayerManager : Singleton<PlayerManager> {
 	private float move;
 	private Rigidbody2D rb2d;
     private Animator anim;
+
+	// Testing new Jump method
 	private float fallMultiplier = 2.5f;
-	private float lowJumpMultiplier = 2f;
+	private float lowJumpMultiplier = 1.5f;
+	[Range(500,700)] private float jumpVelocity;
+	public bool jumpRequest;
+	///
 
 	public LayerMask whatIsGround;
+	
 
 	void Awake(){
 		// assertions
@@ -49,15 +55,33 @@ public class PlayerManager : Singleton<PlayerManager> {
 
 		anim.SetFloat("vSpeed", rb2d.velocity.y);
 
-        // I might need to move this to the InputManager after I create movement UI button
-        if(!grounded) return;
+		if(jumpRequest && grounded){
+			/*if(grounded){
+				anim.SetBool("isGrounded", false);
+				rb2d.AddForce(new Vector2(0, jumpForce));
+			}*/
+			rb2d.AddForce(Vector2.up * jumpVelocity, ForceMode2D.Impulse);
+			anim.SetBool("isGrounded", false);
+			rb2d.AddForce(new Vector2(0, jumpForce));
+			jumpRequest = false;
+		}
 
 		// fall speed
-		if(rb2d.velocity.y < 0){
+		/*if(rb2d.velocity.y < 0){
 			rb2d.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
 		}else if(rb2d.velocity.y > 0 && !Input.GetKeyDown(InputManager.Instance.jump)){
 			rb2d.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
+		}*/
+
+		if(rb2d.velocity.y < 0){
+			rb2d.gravityScale = fallMultiplier;
+		}else if(rb2d.velocity.y > 0 && !Input.GetKeyDown(InputManager.Instance.jump)){
+			rb2d.gravityScale = lowJumpMultiplier;
+		}else{
+			rb2d.gravityScale = 1f;
 		}
+
+        if(!grounded) return;
 
 		move = Input.GetAxis("Horizontal");
 		

@@ -23,7 +23,8 @@ public class InputManager : Singleton<InputManager>{
 
     void Update(){
         if(Input.GetKeyDown(jump)){
-            PlayerManager.Instance.Jump();
+            //PlayerManager.Instance.Jump();
+            PlayerManager.Instance.jumpRequest = true;
         }
         if(Input.GetKeyDown(punch)){
             PlayerManager.Instance.Punch();
