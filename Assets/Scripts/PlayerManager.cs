@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 public class PlayerManager : Singleton<PlayerManager> {
 
     [SerializeField] private float maxSpeed = 10f;
-	[SerializeField] private float jumpForce = 700f;
+	[SerializeField] private float jumpForce = 800f;
 	[SerializeField] private float healthPoints = 100f;
 	[SerializeField] private float maxHealthPoints = 100f;
 	[SerializeField] private GameObject fireball;
@@ -23,6 +23,8 @@ public class PlayerManager : Singleton<PlayerManager> {
 	private float move;
 	private Rigidbody2D rb2d;
     private Animator anim;
+	private float lastMove;
+
 
 	// Testing new Jump method
 	private float fallMultiplier = 2.5f;
@@ -93,6 +95,9 @@ public class PlayerManager : Singleton<PlayerManager> {
 		}else if(move < 0 && facingRight){	// else if move left and not facing left
 			Flip();
 		}
+		if(move != 0){
+			lastMove = move;
+		}
 
 	}
 
@@ -114,15 +119,22 @@ public class PlayerManager : Singleton<PlayerManager> {
 	}
 
 	public void Punch(){
-        if(groundCheck){
+        if(groundCheck && rb2d.velocity.y == 0f){ // if grounded and not jumping/falling
+			// TODO: Stop velocity on punch
+			
+			// regular punch
 			anim.SetTrigger("isPunching");
+		}else if(lastMove != 0){
+			// down-diagonal punch perk
+			print(lastMove);
+			anim.SetTrigger("isJumpKicking");
+			rb2d.gravityScale = lowJumpMultiplier;
+			rb2d.velocity = new Vector2(lastMove * (maxSpeed * 2), (rb2d.velocity.y * -1f));
 		}
 	}
 
 	public void Kick(){
-		if(grounded){
-			anim.SetTrigger("isKicking");
-		}else{
+		if(!grounded){
 			anim.SetTrigger("isJumpKicking");
 		}
 	}
@@ -144,8 +156,16 @@ public class PlayerManager : Singleton<PlayerManager> {
 	public void Crouch(){
 		if(move != 0 && grounded){
 			anim.SetTrigger("isSlidding");
-			rb2d.AddForce(new Vector2((500f * move), 0));
+			//rb2d.AddForce(new Vector2((500f * move), 0));
+			rb2d.velocity += Vector2.up * Physics2D.gravity.y * (0.5f) * Time.deltaTime;
+			rb2d.velocity = new Vector2(move * (maxSpeed * 2), rb2d.velocity.y);
 		}
+		else{ // if(has jump slide perk){
+			//<same as code above>
+			anim.SetTrigger("isSlidding");
+			rb2d.velocity += Vector2.up * Physics2D.gravity.y * (0.5f) * Time.deltaTime;
+			rb2d.velocity = new Vector2(move * (maxSpeed * 2), rb2d.velocity.y);
+		} 
 	}
 
 	IEnumerator LaunchFireBall(GameObject fireball){
