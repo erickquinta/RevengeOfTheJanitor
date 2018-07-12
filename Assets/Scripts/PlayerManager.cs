@@ -125,19 +125,20 @@ public class PlayerManager : Singleton<PlayerManager> {
 			// regular punch
 			anim.SetTrigger("isPunching");
 		}else if(lastMove != 0){
+
+			Debug.Log("jump kick");
 			// down-diagonal punch perk
-			print(lastMove);
 			anim.SetTrigger("isJumpKicking");
 			rb2d.gravityScale = lowJumpMultiplier;
 			rb2d.velocity = new Vector2(lastMove * (maxSpeed * 2), (rb2d.velocity.y * -1f));
 		}
 	}
 
-	public void Kick(){
+	/*public void Kick(){
 		if(!grounded){
 			anim.SetTrigger("isJumpKicking");
 		}
-	}
+	}*/
 
 	public void Ranged(){
 		GameObject newFireball = Instantiate(fireball) as GameObject;
@@ -153,19 +154,20 @@ public class PlayerManager : Singleton<PlayerManager> {
 		}
 	}
 
-	public void Crouch(){
+	public void Slide(){
+		
 		if(move != 0 && grounded){
 			anim.SetTrigger("isSlidding");
 			//rb2d.AddForce(new Vector2((500f * move), 0));
 			rb2d.velocity += Vector2.up * Physics2D.gravity.y * (0.5f) * Time.deltaTime;
-			rb2d.velocity = new Vector2(move * (maxSpeed * 2), rb2d.velocity.y);
+			rb2d.velocity = new Vector2(move * (maxSpeed * 5), rb2d.velocity.y);
 		}
-		else{ // if(has jump slide perk){
+		/*else{ // if(has jump slide perk){
 			//<same as code above>
 			anim.SetTrigger("isSlidding");
 			rb2d.velocity += Vector2.up * Physics2D.gravity.y * (0.5f) * Time.deltaTime;
 			rb2d.velocity = new Vector2(move * (maxSpeed * 2), rb2d.velocity.y);
-		} 
+		} */
 	}
 
 	IEnumerator LaunchFireBall(GameObject fireball){

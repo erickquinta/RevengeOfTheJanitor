@@ -9,16 +9,16 @@ public class InputManager : Singleton<InputManager>{
     public KeyCode right {get;set;}
     public KeyCode left {get;set;}
     public KeyCode punch {get;set;}
-    public KeyCode kick {get;set;}
-    public KeyCode crouch {get;set;}
+   // public KeyCode kick {get;set;}
+    public KeyCode slide {get;set;}
 
     void Awake(){
         jump = KeyCode.UpArrow;//(KeyCode) System.Enum.Parse(typeof(KeyCode), PlayerPrefs.GetString("jumpKey, UpArrow"));
         right = KeyCode.RightArrow;
         left = KeyCode.LeftArrow;
         punch = KeyCode.X;
-        kick = KeyCode.C;
-        crouch = KeyCode.DownArrow;
+       // kick = KeyCode.C;
+        slide = KeyCode.DownArrow;
     }
 
     void Update(){
@@ -35,11 +35,11 @@ public class InputManager : Singleton<InputManager>{
         if(Input.GetKeyDown(left)){
             PlayerManager.Instance.Run();
         }*/
-        if(Input.GetKeyDown(kick)){
+        /*if(Input.GetKeyDown(kick)){
             PlayerManager.Instance.Kick();
-        }
-        if(Input.GetKeyDown(crouch)){
-            PlayerManager.Instance.Crouch();
+        }*/
+        if(Input.GetKeyDown(slide)){
+            PlayerManager.Instance.Slide();
         }
     }
 }
